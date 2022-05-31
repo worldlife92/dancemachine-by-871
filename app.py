@@ -4,7 +4,6 @@ import cv2
 import validators
 import random
 import streamlit.components.v1 as components
-import base64
 
 
 @st.cache
@@ -12,13 +11,6 @@ def load_video(video_path):
     video_file = open(video_path, 'rb')
     video_bytes = video_file.read()
     return video_bytes
-
-
-@st.cache(allow_output_mutation=True)
-def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
 
 
 def main():
@@ -56,7 +48,6 @@ def main():
 
         else:
             st.write("wrong format!")
-
 
     elif choice == "Live record":
         st.title("Webcam Frames Live Record")

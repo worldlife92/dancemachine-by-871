@@ -6,3 +6,8 @@ raw_data/
 *.csv
 **/__pycache__/
 .env
+*.idea*
+*.vscode*
+*_ammar*
+*.mp4
+*.jpg

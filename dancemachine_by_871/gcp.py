@@ -1,37 +1,36 @@
 from google.cloud import storage
 import os
 from termcolor import colored
+from dancemachine_by_871.params import BUCKET_NAME, PROJECT_NAME
 
-PROJECT_NAME="wagon-data-bootcamp-871"
-BASE_URL = "https://storage.googleapis.com"
-BUCKETNAME = "dance_871"
 
 def get_urls(input_name):
     # Instantiates a client
     client = storage.Client(project=PROJECT_NAME)
     # Instantiates a bucket
-    bucket = client.bucket(BUCKETNAME)
+    bucket = client.bucket(BUCKET_NAME)
 
-    videos_fine = [filename.name for filename in list(bucket.list_blobs(prefix='cutted/fine/dance_')) if filename == input_name ]
+    videos_fine = [filename.name for filename in list(bucket.list_blobs(prefix='cutted/fine/dance_')) if filename == input_name]
 
     return videos_fine
 
 
-#from dancemachine_by_871.params import BUCKET_NAME, MODEL_NAME, MODEL_VERSION
-# https://docs.streamlit.io/knowledge-base/tutorials/databases/gcs
-### GCP Storage - - - - - - - - - - - - - - - - - - - - - -
-BUCKET_NAME = 'wagon-data-871-wanli'
-#BUCKET_NAME = 'wagon-data-bootcamp-871'
-# model folder name (will contain the folders for all trained model versions)
-MODEL_NAME = 'uploaded'
+def storage_upload(client, name, temp_path, rm=False):
+    gcc_path = 'UPLOADED'
+    storage_location = f"{gcc_path}/{name}"
 
-def storage_upload(path,rm=False):
-    client = storage.Client().bucket(BUCKET_NAME)
-    local_model_name = 'dance1.mp4'
-    storage_location = f"vids/{MODEL_NAME}/{local_model_name}"
-    blob = client.blob(storage_location)
-    blob.upload_from_filename(path)
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(storage_location)
+    blob.upload_from_filename(f"{temp_path}/{name}")
+
     print(colored(f"=> video uploaded to bucket {BUCKET_NAME} inside {storage_location}",
                   "green"))
-    if rm:
-        os.remove(path)
+
+    if rm:  # Remove temp file after uploading
+        os.remove(f"{temp_path}/{name}")
+
+    '''
+    If we need to work with json file instead of secrets we could do the following:
+    # add the service secret file locally then add the path to the following line
+    # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/file.json"
+    '''

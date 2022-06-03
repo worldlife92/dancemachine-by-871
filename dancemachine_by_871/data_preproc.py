@@ -41,7 +41,8 @@ RIGHT_HEEL = 30
 LEFT_FOOT_INDEX = 31
 RIGHT_FOOT_INDEX = 32
 
-
+MASKING = np.zeros((10,))
+MASKING[:] = -20
 
 
 
@@ -215,7 +216,9 @@ class Preprocessor:
 
     def create_X_y(self, X_true, X_false, y_true, y_false, maxlenframes):
         """Takes the extracted X, y and maxlenframes from extract_angles
-        function and creates a padded numpy array."""
+        function and creates X_padded and y, both which are concatenated from true and false dataset."""
 
-        X_test_pad = pad_sequences(X_true, padding='post', maxlen=maxlen_pad ,dtype='float64',value=masking)
-        X_train_pad = pad_sequences(X_, padding='post', maxlen=maxlen_pad, dtype='float64', value=masking)
+        X_pad = pad_sequences(np.concatenate([X_true, X_false], axis=0), padding='post', maxlen=maxlenframes ,dtype='float64',value=MASKING)
+        y = np.concatenate([y_true, y_false], axis=0)
+
+        return X_pad, y

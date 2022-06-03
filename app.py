@@ -1,4 +1,3 @@
-from email.headerregistry import AddressHeader
 import streamlit as st
 import cv2
 import validators
@@ -6,6 +5,8 @@ import random
 import streamlit.components.v1 as components
 from dancemachine_by_871.gcp import storage_upload
 import os.path
+from google.oauth2 import service_account
+from google.cloud import storage
 
 
 @st.cache
@@ -26,6 +27,13 @@ def main():
         st.video(video_bytes)
 
     elif choice == "Video upload":
+        # Create API client.
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = storage.Client(credentials=credentials)
+
+        # Streamlit page
         st.subheader("Video Upload")
         video_file = st.file_uploader("Upload video", type=['mp4'])
         temp_path = "dancemachine_by_871/temp"
@@ -34,13 +42,17 @@ def main():
             file_details = {"Filename": video_file.name, "FileType": video_file.type, "FileSize": video_file.size}
             st.write(file_details)
             st.video(video_file)
-            with open(f"{temp_path}/{video_file.name}","wb") as f:
+
+            # Save video to temp file
+            with open(f"{temp_path}/{video_file.name}", "wb") as f:
                 f.write(video_file.getbuffer())
-
             st.success("File Saved")
-            if os.path.exists(f"{temp_path}/{video_file.name}"):
-                storage_upload(f"{temp_path}/{video_file.name}",True)
 
+            # Upload video to gcp
+            if os.path.exists(f"{temp_path}/{video_file.name}"):
+                storage_upload(client, video_file.name, temp_path, True)
+
+            # Rate me button
             if st.button("Rate Me!"):
                 mylist = ["Perfect", "Ok", "Terrible"]
                 choice = random.choices(mylist)
@@ -55,19 +67,16 @@ def main():
                                 f'{"My grandmother dances better than that!! 💩"}</h1>',
                                 unsafe_allow_html=True)
 
-        else:
-            st.write("wrong format!")
-
     elif choice == "Live record":
         st.title("Webcam Frames Live Record")
         run = st.checkbox('Run')
-        FRAME_WINDOW = st.image([])
+        frame_window = st.image([])
         camera = cv2.VideoCapture(0)
 
         while run:
             _, frame = camera.read()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            FRAME_WINDOW.image(frame)
+            frame_window.image(frame)
         else:
             st.write('Stopped')
 

@@ -48,8 +48,8 @@ MASKING[:] = -20
 
 class Preprocessor:
 
-    def __init__():
-        pass
+    def __init__(self, urls):
+        self.urls = urls
 
     def unify_imgsize(self, frame, desired_width, desired_height):
         """Check the frames size and puts it into unified size by resizing/scaling/padding the image.
@@ -137,7 +137,7 @@ class Preprocessor:
                 if showvideo:
                     cv2.imshow('Mediapipe Feed', image)
 
-        new_fps = int(vid_fps/fps_desired)
+        new_fps = int(round(vid_fps/fps_desired))
 
         frames_lst = frames_lst[::new_fps]
         poi_coords = poi_coords[::new_fps]
@@ -190,14 +190,14 @@ class Preprocessor:
         self.angle_between(data[RIGHT_HIP], data[RIGHT_KNEE], data[RIGHT_ANKLE]),\
         self.angle_between(data[RIGHT_KNEE], data[RIGHT_ANKLE], data[RIGHT_FOOT_INDEX])])
 
-    def extract_X_y_angles(self, video_list, y_val=0):
+    def extract_X_y_angles(self, y_val=0):
         """Extracting X & ys for a list of paths to video files. Set y_val to the correct y_val for the video"""
 
         X = []
         y = []
         pad_length = 0
 
-        for ind, i in enumerate(video_list):
+        for ind, i in enumerate(self.urls):
             start = time.time()
             coords = self.video_preprocess(i, coords=True)
 
@@ -207,18 +207,26 @@ class Preprocessor:
 
             X.append(np.array(jiggle_angles))
             y.append(y_val)
-            print(f'Finished processing {ind+1} out of {len(video_list)} in {round(time.time()-start, 2)} seconds.')
+            print(f'Finished processing {ind+1} out of {len(self.urls)} in {round(time.time()-start, 2)} seconds.')
 
             if len(jiggle_angles) > pad_length:
                 pad_length = len(jiggle_angles)
 
         return np.array(X), np.array(y), pad_length
 
-    def create_X_y(self, X_true, X_false, y_true, y_false, maxlenframes):
-        """Takes the extracted X, y and maxlenframes from extract_angles
+    def create_X_y(self, Xs, ys, maxlenframes):
+        """Takes a list of Xs, list of ys and maxlenframes from extract_angles
         function and creates X_padded and y, both which are concatenated from true and false dataset."""
 
-        X_pad = pad_sequences(np.concatenate([X_true, X_false], axis=0), padding='post', maxlen=maxlenframes ,dtype='float64',value=MASKING)
-        y = np.concatenate([y_true, y_false], axis=0)
+        X_pad = pad_sequences(np.concatenate(Xs, axis=0), padding='post', maxlen=maxlenframes ,dtype='float64',value=MASKING)
+        y = np.concatenate(ys, axis=0)
 
         return X_pad, y
+
+
+
+
+if __name__ == '__main__':
+
+    preproc = Preprocessor(['raw_data/jiggle.mp4'])
+    print(preproc.extract_X_y_angles(1))

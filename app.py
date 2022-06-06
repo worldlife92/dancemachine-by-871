@@ -7,6 +7,7 @@ from dancemachine_by_871.gcp import storage_upload
 import os.path
 from google.oauth2 import service_account
 from google.cloud import storage
+import requests
 
 
 @st.cache
@@ -20,6 +21,7 @@ def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
     menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
+    video_name =""
 
     if choice == "Challenge":
         st.subheader("Dance challenge of the day 💃🏻 🕺🏽")
@@ -36,6 +38,7 @@ def main():
         # Streamlit page
         st.subheader("Video Upload")
         video_file = st.file_uploader("Upload video", type=['mp4'])
+        video_name = video_file.name
         temp_path = "dancemachine_by_871/temp"
         if video_file is not None:
             # To See Details
@@ -54,6 +57,10 @@ def main():
 
             # Rate me button
             if st.button("Rate Me!"):
+                params = {"predict": video_name}
+                r = requests.get('http://127.0.0.1:8000', params=params)
+                r.status_code
+                st.write(r.json())
                 mylist = ["Perfect", "Ok", "Terrible"]
                 choice = random.choices(mylist)
                 if choice[0] == "Perfect":

@@ -18,6 +18,5 @@ def predict(filename):
     #Function should call the Videofile name from Google bucket
     preproc = Preprocessor(get_urls(filename))
     X_0, y_0, maxlen = preproc.extract_X_y_angles(0)
-    model = DanceModel("model4")
-    model.predict(X_0)
-    return {'ok': True}
+    model = DanceModel()
+    return {'score': model.predict(X_0)}

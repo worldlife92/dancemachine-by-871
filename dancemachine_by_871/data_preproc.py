@@ -205,9 +205,11 @@ class Preprocessor:
             if len(jiggle_angles) > pad_length:
                 pad_length = len(jiggle_angles)
 
+        X = pad_sequences(X, padding='post', maxlen=400, dtype='float64', value=MASKING)
+
         return np.array(X), np.array(y), pad_length
 
-    def create_X_y(self, Xs, ys, maxlenframes):
+    def create_X_y(self, Xs, ys, maxlenframes=400):
         """Takes a list of Xs, list of ys and maxlenframes from extract_angles
         function and creates X_padded and y, both which are concatenated from true and false dataset."""
 

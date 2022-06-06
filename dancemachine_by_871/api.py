@@ -15,7 +15,12 @@ def predict(filename):
 
     #Receive filename from frontend
     #Function should call the Videofile name from Google bucket
-    preproc = Preprocessor('https://storage.googleapis.com/dance_871/UPLOADED/'+str(filename))
+    PATH = ['https://storage.googleapis.com/dance_871/UPLOADED/'+filename]
+    preproc = Preprocessor(PATH)
     X_0, y_0, maxlen = preproc.extract_X_y_angles(0)
     model = DanceModel()
-    return {'score': model.predict(X_0)}
+    return {'score': model.predict(X_0)[0][0]}
+
+if __name__ == '__main__':
+
+    print(predict('cutted_dance_20.mp4'))

@@ -57,8 +57,9 @@ def main():
 
             # Rate me button
             if st.button("Rate Me!"):
-                params = {"predict": video_name}
-                r = requests.get('http://127.0.0.1:8000', params=params)
+                st.write(video_name)
+                params = {"filename": video_name}
+                r = requests.get('http://127.0.0.1:8000/predict', params=params)
                 r.status_code
                 st.write(r.json())
                 mylist = ["Perfect", "Ok", "Terrible"]

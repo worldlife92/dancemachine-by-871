@@ -3,18 +3,6 @@ import os
 from termcolor import colored
 from dancemachine_by_871.params import BUCKET_NAME, PROJECT_NAME
 
-
-def get_urls(input_name):
-    # Instantiates a client
-    client = storage.Client(project=PROJECT_NAME)
-    # Instantiates a bucket
-    bucket = client.bucket(BUCKET_NAME)
-
-    videos_fine = [filename.name for filename in list(bucket.list_blobs(prefix='cutted/fine/dance_')) if filename == input_name]
-
-    return videos_fine
-
-
 def storage_upload(client, name, temp_path, rm=False):
     gcc_path = 'UPLOADED'
     storage_location = f"{gcc_path}/{name}"

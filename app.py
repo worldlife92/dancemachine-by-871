@@ -18,7 +18,7 @@ def load_video(video_path):
 
 def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
-    menu = ["Challenge", "Video upload", "Live record", "Video URL", "About"]
+    menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     if choice == "Challenge":
@@ -72,13 +72,49 @@ def main():
         run = st.checkbox('Run')
         frame_window = st.image([])
         camera = cv2.VideoCapture(0)
-
+        # vid_cod = cv2.VideoWriter_fourcc(*'mp4v')
+        vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        output = cv2.VideoWriter(
+            "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4", vid_cod,
+            20.0, (640, 480))
         while run:
-            _, frame = camera.read()
+            ret, frame = camera.read()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame_window.image(frame)
-        else:
-            st.write('Stopped')
+            output.write(frame)
+
+        camera.release()
+        output.release()
+        cv2.destroyAllWindows()
+
+    elif choice == "LR":
+        st.title("Webcam Frames Live Record  II")
+        cap = cv2.VideoCapture(0)
+
+        # Define the codec and create VideoWriter object
+        # fourcc = cv2.cv.CV_FOURCC(*'DIVX')
+        # out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+        out = cv2.VideoWriter('output.avi', -1, 20.0, (640, 480))
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.flip(frame, 0)
+
+                # write the flipped frame
+                out.write(
+                    "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4")
+
+                cv2.imshow('frame', frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                break
+
+        # Release everything if job is finished
+        cap.release()
+        out.release()
+        cv2.destroyAllWindows()
 
     elif choice == "Video URL":
         st.title("Video URL")

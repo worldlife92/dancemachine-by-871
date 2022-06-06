@@ -56,3 +56,6 @@ pypi:
 
 streamlit:
 	-@streamlit run app.py
+
+run_api:
+	uvicorn dancemachine_by_871.api:app --reload  # load web server with code autoreload

@@ -21,7 +21,7 @@ def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
     menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
-    video_name =""
+    video_name = ""
 
     if choice == "Challenge":
         st.subheader("Dance challenge of the day 💃🏻 🕺🏽")
@@ -38,42 +38,48 @@ def main():
         # Streamlit page
         st.subheader("Video Upload")
         video_file = st.file_uploader("Upload video", type=['mp4'])
-        video_name = video_file.name
         temp_path = "dancemachine_by_871/temp"
         if video_file is not None:
             # To See Details
+            video_name = video_file.name
             file_details = {"Filename": video_file.name, "FileType": video_file.type, "FileSize": video_file.size}
             st.write(file_details)
             st.video(video_file)
 
             # Save video to temp file
+            if not os.path.exists(temp_path):
+                os.makedirs(temp_path)
             with open(f"{temp_path}/{video_file.name}", "wb") as f:
                 f.write(video_file.getbuffer())
-            st.success("File Saved")
+                st.success("File Saved")
 
             # Upload video to gcp
             if os.path.exists(f"{temp_path}/{video_file.name}"):
                 storage_upload(client, video_file.name, temp_path, True)
+                st.success(f" Successfully uploaded '{video_name}'!")
 
             # Rate me button
             if st.button("Rate Me!"):
-                st.write(video_name)
                 params = {"filename": video_name}
-                r = requests.get('http://127.0.0.1:8000/predict', params=params)
-                r.status_code
-                st.write(r.json())
-                mylist = ["Perfect", "Ok", "Terrible"]
-                choice = random.choices(mylist)
-                if choice[0] == "Perfect":
-                    st.markdown(f'<h1 style="color:#00FF00;font-size:24px;">{"Perfect 🤩"}</h1>',
-                                unsafe_allow_html=True)
-                elif choice[0] == "Ok":
-                    st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">{"It ok, keep trying 😕”"}</h1>',
-                                unsafe_allow_html=True)
+                response = requests.get('http://127.0.0.1:8000/predict', params=params)
+                status = response.status_code
+                result = response.json()
+
+                if status == 200:
+                    if result["score"] <= 50:
+                        st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
+                                    f'"{result["score"]}% | \"My grandmother dances better than that!! 💩\""</h1>',
+                                    unsafe_allow_html=True)
+                    elif result["score"] <= 75:
+                        st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">'
+                                    f'"{result["score"]}% | \"Not bad! keep trying\""</h1>',
+                                    unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<h1 style="color:#00FF00;font-size:24px;">{"Perfect 🤩"}</h1>',
+                                    unsafe_allow_html=True)
                 else:
-                    st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
-                                f'{"My grandmother dances better than that!! 💩"}</h1>',
-                                unsafe_allow_html=True)
+                    st.error(f"Error {status} in request, couldn't rate '{video_name}'!")
+
 
     elif choice == "Live record":
         st.title("Webcam Frames Live Record")

@@ -19,7 +19,7 @@ def predict(filename):
     preproc = Preprocessor(PATH)
     X_0, y_0, maxlen = preproc.extract_X_y_angles(0)
     model = DanceModel()
-    return {"score": f"{int(model.predict(X_0)[0][0]*100)}%"}
+    return {"score": int(model.predict(X_0)[0][0]*100)}
 
 if __name__ == '__main__':
 

@@ -40,8 +40,10 @@ RIGHT_HEEL = 30
 LEFT_FOOT_INDEX = 31
 RIGHT_FOOT_INDEX = 32
 
+MAX_LEN = 94
+
 MASKING = np.zeros((10,))
-MASKING[:] = -20
+MASKING[:] = -1
 
 
 class Preprocessor:
@@ -67,8 +69,8 @@ class Preprocessor:
 
         return cv2.resize(frame, (desired_width, desired_height), interpolation=cv2.INTER_CUBIC)
 
-    def video_preprocess(self, videofile, frames=False, coords=False, showvideo=False, fps_desired=10, resize_width=480,
-                         resize_height=640):
+    def video_preprocess(self, videofile, frames=False, coords=False, showvideo=False, fps_desired=5, resize_width=288,
+                         resize_height=512):
         """Extracts the frames and coordinates of points of interest/joints from the dance video and returns
         a list of frames of the video and an np.array of coordinates with the joints."""
 
@@ -188,7 +190,6 @@ class Preprocessor:
 
         X = []
         y = []
-        pad_length = 0
 
         for ind, i in enumerate(self.urls):
             start = time.time()
@@ -202,22 +203,11 @@ class Preprocessor:
             y.append(y_val)
             print(f'Finished processing {ind + 1} out of {len(self.urls)} in {round(time.time() - start, 2)} seconds.')
 
-            if len(jiggle_angles) > pad_length:
-                pad_length = len(jiggle_angles)
+        X = pad_sequences(X, padding='post', maxlen=MAX_LEN, dtype='float64', value=MASKING)
 
-        X = pad_sequences(X, padding='post', maxlen=400, dtype='float64', value=MASKING)
+        X = X / np.pi
 
-        return np.array(X), np.array(y), pad_length
-
-    def create_X_y(self, Xs, ys, maxlenframes=400):
-        """Takes a list of Xs, list of ys and maxlenframes from extract_angles
-        function and creates X_padded and y, both which are concatenated from true and false dataset."""
-
-        X_pad = pad_sequences(np.concatenate(Xs, axis=0), padding='post', maxlen=maxlenframes, dtype='float64',
-                              value=MASKING)
-        y = np.concatenate(ys, axis=0)
-
-        return X_pad, y
+        return np.array(X), np.array(y)
 
 
 if __name__ == '__main__':

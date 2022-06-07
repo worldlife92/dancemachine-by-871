@@ -8,6 +8,8 @@ import os.path
 from google.oauth2 import service_account
 from google.cloud import storage
 import requests
+import hydralit_components as hc
+from streamlit_option_menu import option_menu
 
 
 @st.cache
@@ -19,16 +21,20 @@ def load_video(video_path):
 
 def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
-    menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
-    choice = st.sidebar.selectbox("Menu", menu)
+    with st.sidebar:
+        choice = option_menu("Main Menu", ["The Challenge", 'Video Upload', 'Live Recording'],
+                             icons=['house', 'arrow-bar-up', 'record2'], menu_icon="cast", default_index=0)
+
+    # menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
+    # choice = st.sidebar.selectbox("Menu", menu)
     video_name = ""
 
-    if choice == "Challenge":
-        st.subheader("Dance challenge of the day 💃🏻 🕺🏽")
+    if choice == "The Challenge":
+        st.subheader("Dance Challenge of the Day 💃🏻 🕺🏽")
         video_bytes = load_video('dancemachine_by_871/data/dance1.mp4')
         st.video(video_bytes)
 
-    elif choice == "Video upload":
+    elif choice == "Video Upload":
         # Create API client.
         credentials = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"]
@@ -45,11 +51,11 @@ def main():
             st.video(video_file)
 
             # Save video to temp file
-            if not os.path.exists(temp_path):
-                os.makedirs(temp_path)
-            with open(f"{temp_path}/{video_file.name}", "wb") as f:
-                f.write(video_file.getbuffer())
-                st.success("File Saved")
+            # if not os.path.exists(temp_path):
+            #     os.makedirs(temp_path)
+            # with open(f"{temp_path}/{video_file.name}", "wb") as f:
+            #     f.write(video_file.getbuffer())
+            #     st.success("File Saved")
 
             # Upload video to gcp
             if os.path.exists(f"{temp_path}/{video_file.name}"):
@@ -59,9 +65,10 @@ def main():
             # Rate me button
             if st.button("Rate Me!"):
                 params = {"filename": video_name}
-                response = requests.get('http://127.0.0.1:8000/predict', params=params)
-                status = response.status_code
-                result = response.json()
+                with hc.HyLoader('Checking out your dance moves...', loader_name=hc.Loaders.pacman):
+                    response = requests.get('http://127.0.0.1:8000/predict', params=params)
+                    status = response.status_code
+                    result = response.json()
 
                 if status == 200:
                     if result["score"] <= 50:
@@ -79,21 +86,35 @@ def main():
                     st.error(f"Error {status} in request, couldn't rate '{video_name}'!")
 
 
-    elif choice == "Live record":
+    elif choice == "Live Recording":
         st.title("Webcam Frames Live Record")
-        run = st.checkbox('Run')
+        # run = st.checkbox('Run')
         frame_window = st.image([])
         camera = cv2.VideoCapture(0)
+
+        active_record = False
+        end_rec = True
         # vid_cod = cv2.VideoWriter_fourcc(*'mp4v')
-        vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        output = cv2.VideoWriter(
-            "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4", vid_cod,
-            20.0, (640, 480))
-        while run:
+        # vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        output = cv2.VideoWriter(os.path.join(os.path.dirname(__file__),"cam_video.mp4"), -1,20.0, (640, 480))
+
+        record = st.button('Start recording', disabled=active_record)
+        end =  st.button('End recording', disabled=end_rec)
+
+
+        while camera.isOpened():
             ret, frame = camera.read()
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame_window.image(frame)
-            output.write(frame)
+            if ret:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame_window.image(frame)
+
+                active_record = True
+                output.write(frame)
+                end_rec = False
+
+            if end:
+                break
+
 
         camera.release()
         output.release()

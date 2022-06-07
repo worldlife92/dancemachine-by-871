@@ -9,7 +9,6 @@ from google.oauth2 import service_account
 from google.cloud import storage
 import requests
 
-
 @st.cache
 def load_video(video_path):
     video_file = open(video_path, 'rb')

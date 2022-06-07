@@ -42,8 +42,6 @@ def main():
         if video_file is not None:
             # To See Details
             video_name = video_file.name
-            file_details = {"Filename": video_file.name, "FileType": video_file.type, "FileSize": video_file.size}
-            st.write(file_details)
             st.video(video_file)
 
             # Save video to temp file

@@ -1,9 +1,13 @@
-from email.headerregistry import AddressHeader
 import streamlit as st
 import cv2
 import validators
 import random
 import streamlit.components.v1 as components
+from dancemachine_by_871.gcp import storage_upload
+import os.path
+from google.oauth2 import service_account
+from google.cloud import storage
+import requests
 
 
 @st.cache
@@ -15,8 +19,9 @@ def load_video(video_path):
 
 def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
-    menu = ["Challenge", "Video upload", "Live record", "Video URL", "About"]
+    menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
+    video_name = ""
 
     if choice == "Challenge":
         st.subheader("Dance challenge of the day 💃🏻 🕺🏽")
@@ -24,43 +29,104 @@ def main():
         st.video(video_bytes)
 
     elif choice == "Video upload":
+        # Create API client.
+        credentials = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"]
+        )
+        client = storage.Client(credentials=credentials)
+
+        # Streamlit page
         st.subheader("Video Upload")
         video_file = st.file_uploader("Upload video", type=['mp4'])
+        temp_path = "dancemachine_by_871/temp"
         if video_file is not None:
             # To See Details
-            file_details = {"Filename": video_file.name, "FileType": video_file.type, "FileSize": video_file.size}
-            st.write(file_details)
+            video_name = video_file.name
             st.video(video_file)
-            st.write(type(video_file))
-            if st.button("Rate Me!"):
-                mylist = ["Perfect", "Ok", "Terrible"]
-                choice = random.choices(mylist)
-                if choice[0] == "Perfect":
-                    st.markdown(f'<h1 style="color:#00FF00;font-size:24px;">{"Perfect 🤩"}</h1>',
-                                unsafe_allow_html=True)
-                elif choice[0] == "Ok":
-                    st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">{"It ok, keep trying 😕”"}</h1>',
-                                unsafe_allow_html=True)
-                else:
-                    st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
-                                f'{"My grandmother dances better than that!! 💩"}</h1>',
-                                unsafe_allow_html=True)
 
-        else:
-            st.write("wrong format!")
+            # Save video to temp file
+            if not os.path.exists(temp_path):
+                os.makedirs(temp_path)
+            with open(f"{temp_path}/{video_file.name}", "wb") as f:
+                f.write(video_file.getbuffer())
+                st.success("File Saved")
+
+            # Upload video to gcp
+            if os.path.exists(f"{temp_path}/{video_file.name}"):
+                storage_upload(client, video_file.name, temp_path, True)
+                st.success(f" Successfully uploaded '{video_name}'!")
+
+            # Rate me button
+            if st.button("Rate Me!"):
+                params = {"filename": video_name}
+                response = requests.get('http://127.0.0.1:8000/predict', params=params)
+                status = response.status_code
+                result = response.json()
+
+                if status == 200:
+                    if result["score"] <= 50:
+                        st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
+                                    f'"{result["score"]}% | \"My grandmother dances better than that!! 💩\""</h1>',
+                                    unsafe_allow_html=True)
+                    elif result["score"] <= 75:
+                        st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">'
+                                    f'"{result["score"]}% | \"Not bad! keep trying\""</h1>',
+                                    unsafe_allow_html=True)
+                    else:
+                        st.markdown(f'<h1 style="color:#00FF00;font-size:24px;">{"Perfect 🤩"}</h1>',
+                                    unsafe_allow_html=True)
+                else:
+                    st.error(f"Error {status} in request, couldn't rate '{video_name}'!")
+
 
     elif choice == "Live record":
         st.title("Webcam Frames Live Record")
         run = st.checkbox('Run')
-        FRAME_WINDOW = st.image([])
+        frame_window = st.image([])
         camera = cv2.VideoCapture(0)
-
+        # vid_cod = cv2.VideoWriter_fourcc(*'mp4v')
+        vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        output = cv2.VideoWriter(
+            "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4", vid_cod,
+            20.0, (640, 480))
         while run:
-            _, frame = camera.read()
+            ret, frame = camera.read()
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            FRAME_WINDOW.image(frame)
-        else:
-            st.write('Stopped')
+            frame_window.image(frame)
+            output.write(frame)
+
+        camera.release()
+        output.release()
+        cv2.destroyAllWindows()
+
+    elif choice == "LR":
+        st.title("Webcam Frames Live Record  II")
+        cap = cv2.VideoCapture(0)
+
+        # Define the codec and create VideoWriter object
+        # fourcc = cv2.cv.CV_FOURCC(*'DIVX')
+        # out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+        out = cv2.VideoWriter('output.avi', -1, 20.0, (640, 480))
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.flip(frame, 0)
+
+                # write the flipped frame
+                out.write(
+                    "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4")
+
+                cv2.imshow('frame', frame)
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                break
+
+        # Release everything if job is finished
+        cap.release()
+        out.release()
+        cv2.destroyAllWindows()
 
     elif choice == "Video URL":
         st.title("Video URL")

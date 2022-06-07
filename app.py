@@ -23,7 +23,7 @@ def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
     with st.sidebar:
         choice = option_menu("Main Menu", ["The Challenge", 'Video Upload', 'Live Recording'],
-                             icons=['house', 'arrow-bar-up', 'record2'], menu_icon="cast", default_index=0)
+                             icons=['music-note-beamed', 'arrow-bar-up', 'record2'], menu_icon="three-dots-vertical", default_index=0)
 
     # menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     # choice = st.sidebar.selectbox("Menu", menu)
@@ -43,6 +43,7 @@ def main():
 
         # Streamlit page
         st.subheader("Video Upload")
+        st.write('Select your video. Please make sure that it is an MP4 file.')
         video_file = st.file_uploader("Upload video", type=['mp4'])
         temp_path = "dancemachine_by_871/temp"
         if video_file is not None:

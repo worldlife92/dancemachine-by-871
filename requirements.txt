@@ -3,3 +3,6 @@ numpy~=1.19.5
 scikit-learn~=1.1.1
 mediapipe~=0.8.10
 opencv-contrib-python~=4.5.5.64
+hydralit
+hydralit-components
+streamlit-option-menu

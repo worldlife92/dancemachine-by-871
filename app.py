@@ -21,7 +21,7 @@ def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
     menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
-    video_name =""
+    video_name = ""
 
     if choice == "Challenge":
         st.subheader("Dance challenge of the day 💃🏻 🕺🏽")
@@ -57,10 +57,10 @@ def main():
 
             # Rate me button
             if st.button("Rate Me!"):
-                params = {"predict": video_name}
-                r = requests.get('http://127.0.0.1:8000', params=params)
+                params = {"filename": video_name}
+                r = requests.get('http://127.0.0.1:8000/predict', params=params)
                 r.status_code
-                st.write(r.json())
+                st.write(r.json()['score'])
                 mylist = ["Perfect", "Ok", "Terrible"]
                 choice = random.choices(mylist)
                 if choice[0] == "Perfect":

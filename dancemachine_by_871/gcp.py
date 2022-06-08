@@ -20,6 +20,8 @@ def storage_upload(client, name, temp_local_path, rm=False):
     blob = bucket.blob(f"{base_path}/{name}")
     blob.upload_from_filename(f"{temp_local_path}/{name}")
 
+    print(f"=> video uploaded to bucket {BUCKET_NAME} inside {base_path}/{name}")
+
     if rm:  # Remove temp file after uploading
         os.remove(f"{temp_local_path}/{name}")
 

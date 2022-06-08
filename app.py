@@ -47,7 +47,7 @@ def main():
         if video_file is not None:
             # To See Details
             video_name = video_file.name
-            st.video("https://storage.googleapis.com/dance_871/UPLOADED/"+video_file)
+            st.video(f"https://storage.googleapis.com/dance_871/UPLOADED/{video_name}")
 
             # Save video to temp file
             if not os.path.exists(temp_path):

@@ -7,6 +7,10 @@ COPY requirements.txt /requirements.txt
 
 RUN pip install -r requirements.txt
 
+#The Dockerfile is based on a python image and uses uvicorn in order to serve the API.
+RUN pip install -U pip
+RUN pip install fastapi uvicorn
+
 #These commands install the cv2 dependencies that are normally present on the local machine, but might be missing in your Docker container causing the issue.
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y

@@ -1,6 +1,5 @@
 from google.cloud import storage
 import os
-from termcolor import colored
 from dancemachine_by_871.params import BUCKET_NAME, PROJECT_NAME
 
 
@@ -20,9 +19,6 @@ def storage_upload(client, name, temp_local_path, rm=False):
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(f"{base_path}/{name}")
     blob.upload_from_filename(f"{temp_local_path}/{name}")
-
-    print(colored(f"=> video uploaded to bucket {BUCKET_NAME} inside {base_path}/{name}",
-                  "green"))
 
     if rm:  # Remove temp file after uploading
         os.remove(f"{temp_local_path}/{name}")

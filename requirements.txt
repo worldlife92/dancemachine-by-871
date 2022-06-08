@@ -2,3 +2,4 @@ streamlit
 hydralit
 hydralit-components
 streamlit-option-menu
+google-cloud-storage

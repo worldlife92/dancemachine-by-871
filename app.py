@@ -1,7 +1,5 @@
 import streamlit as st
-import cv2
-import validators
-import random
+# import validators
 import streamlit.components.v1 as components
 from dancemachine_by_871.gcp import storage_upload
 import os.path
@@ -87,89 +85,89 @@ def main():
                     st.error(f"Error {status} in request, couldn't rate '{video_name}'!")
 
 
-    elif choice == "Live Recording":
-        st.title("Webcam Frames Live Record")
-        # run = st.checkbox('Run')
-        frame_window = st.image([])
-        camera = cv2.VideoCapture(0)
+    # elif choice == "Live Recording":
+    #     st.title("Webcam Frames Live Record")
+    #     # run = st.checkbox('Run')
+    #     frame_window = st.image([])
+    #     camera = cv2.VideoCapture(0)
 
-        active_record = False
-        end_rec = True
-        # vid_cod = cv2.VideoWriter_fourcc(*'mp4v')
-        # vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        output = cv2.VideoWriter(os.path.join(os.path.dirname(__file__),"cam_video.mp4"), -1,20.0, (640, 480))
+    #     active_record = False
+    #     end_rec = True
+    #     # vid_cod = cv2.VideoWriter_fourcc(*'mp4v')
+    #     # vid_cod = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    #     output = cv2.VideoWriter(os.path.join(os.path.dirname(__file__),"cam_video.mp4"), -1,20.0, (640, 480))
 
-        record = st.button('Start recording', disabled=active_record)
-        end =  st.button('End recording', disabled=end_rec)
-
-
-        while camera.isOpened():
-            ret, frame = camera.read()
-            if ret:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                frame_window.image(frame)
-
-                active_record = True
-                output.write(frame)
-                end_rec = False
-
-            if end:
-                break
+    #     record = st.button('Start recording', disabled=active_record)
+    #     end =  st.button('End recording', disabled=end_rec)
 
 
-        camera.release()
-        output.release()
-        cv2.destroyAllWindows()
+    #     while camera.isOpened():
+    #         ret, frame = camera.read()
+    #         if ret:
+    #             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #             frame_window.image(frame)
 
-    elif choice == "LR":
-        st.title("Webcam Frames Live Record  II")
-        cap = cv2.VideoCapture(0)
+    #             active_record = True
+    #             output.write(frame)
+    #             end_rec = False
 
-        # Define the codec and create VideoWriter object
-        # fourcc = cv2.cv.CV_FOURCC(*'DIVX')
-        # out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
-        out = cv2.VideoWriter('output.avi', -1, 20.0, (640, 480))
+    #         if end:
+    #             break
 
-        while cap.isOpened():
-            ret, frame = cap.read()
-            if ret:
-                frame = cv2.flip(frame, 0)
 
-                # write the flipped frame
-                out.write(
-                    "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4")
+    #     camera.release()
+    #     output.release()
+    #     cv2.destroyAllWindows()
 
-                cv2.imshow('frame', frame)
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            else:
-                break
+    # elif choice == "LR":
+    #     st.title("Webcam Frames Live Record  II")
+    #     cap = cv2.VideoCapture(0)
 
-        # Release everything if job is finished
-        cap.release()
-        out.release()
-        cv2.destroyAllWindows()
+    #     # Define the codec and create VideoWriter object
+    #     # fourcc = cv2.cv.CV_FOURCC(*'DIVX')
+    #     # out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+    #     out = cv2.VideoWriter('output.avi', -1, 20.0, (640, 480))
 
-    elif choice == "Video URL":
-        st.title("Video URL")
-        url = st.text_input(label='The URL link', type="default")
-        if st.button("Load"):
-            if validators.url(url):
-                st.video(url)
-            else:
-                st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">{"Invalid URL (✖╭╮✖)”"}</h1>',
-                            unsafe_allow_html=True)
+    #     while cap.isOpened():
+    #         ret, frame = cap.read()
+    #         if ret:
+    #             frame = cv2.flip(frame, 0)
 
-    else:
-        st.subheader("About")
-        components.html('''
-        <div class="d-flex align-items-center my-" data-controller="ajax-form">
-            <small><a target="blank" class="ml-2 btn text-underline" href="https://github.com/worldlife92/dancemachine_by_871">Github Repository</a></small>
-          </div>
-        <div class="d-flex align-items-center my-1" data-controller="ajax-form">
-            <small><a target="blank" class="ml-2 btn text-underline" href="https://trello.com/invite/b/ZWB295OI/8395bd05d3cafe2b30cade4b350d6de7/dance-tutor">Project Dashboard</a></small>
-        </div>
-        ''')
+    #             # write the flipped frame
+    #             out.write(
+    #                 "/Users/ammarwanli/code/wanliammar/dancemachine_by_871/dancemachine_by_871/data/cam_video.mp4")
+
+    #             cv2.imshow('frame', frame)
+    #             if cv2.waitKey(1) & 0xFF == ord('q'):
+    #                 break
+    #         else:
+    #             break
+
+    #     # Release everything if job is finished
+    #     cap.release()
+    #     out.release()
+    #     cv2.destroyAllWindows()
+
+    # elif choice == "Video URL":
+    #     st.title("Video URL")
+    #     url = st.text_input(label='The URL link', type="default")
+    #     if st.button("Load"):
+    #         if validators.url(url):
+    #             st.video(url)
+    #         else:
+    #             st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">{"Invalid URL (✖╭╮✖)”"}</h1>',
+    #                         unsafe_allow_html=True)
+
+    # else:
+    #     st.subheader("About")
+    #     components.html('''
+    #     <div class="d-flex align-items-center my-" data-controller="ajax-form">
+    #         <small><a target="blank" class="ml-2 btn text-underline" href="https://github.com/worldlife92/dancemachine_by_871">Github Repository</a></small>
+    #       </div>
+    #     <div class="d-flex align-items-center my-1" data-controller="ajax-form">
+    #         <small><a target="blank" class="ml-2 btn text-underline" href="https://trello.com/invite/b/ZWB295OI/8395bd05d3cafe2b30cade4b350d6de7/dance-tutor">Project Dashboard</a></small>
+    #     </div>
+    #     ''')
 
 
 if __name__ == '__main__':

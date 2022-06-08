@@ -3,12 +3,8 @@ numpy>=1.20
 scikit-learn~=1.1.1
 mediapipe~=0.8.10
 opencv-contrib-python~=4.5.5.64
-hydralit
-hydralit-components
-streamlit-option-menu
-streamlit
-pandas
-uvicorn
-fastapi
-google-cloud-storage
+pandas~=1.4.2
+uvicorn~=0.17.6
+fastapi~=0.78.0
+google-cloud-storage~=2.3.0
 pip>=9

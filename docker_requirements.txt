@@ -8,4 +8,3 @@ uvicorn~=0.17.6
 fastapi~=0.78.0
 google-cloud-storage~=2.3.0
 pip>=9
-

@@ -11,7 +11,4 @@ raw_data/
 *_ammar*
 *.mp4
 *.jpg
-<<<<<<< HEAD
 .streamlit/secrets.toml
-=======
->>>>>>> 034575426ab6b2faa3652e8227966d0db641f802

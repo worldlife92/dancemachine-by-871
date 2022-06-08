@@ -3,9 +3,9 @@ FROM python:3.8.6-buster
 COPY api /api
 COPY dancemachine_by_871 /dancemachine_by_871
 COPY 90_pct_model.h5 /90_pct_model.h5
-COPY requirements.txt /requirements.txt
+COPY docker_requirements.txt /docker_requirements.txt
 
-RUN pip install -r requirements.txt
+RUN pip install -r docker_requirements.txt
 
 #The Dockerfile is based on a python image and uses uvicorn in order to serve the API.
 RUN pip install -U pip

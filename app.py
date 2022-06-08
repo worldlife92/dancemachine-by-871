@@ -72,9 +72,13 @@ def main():
                 if status == 200:
                     if result["score"] <= 50:
                         st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
+                                    f'"{result["score"]}% | \"It looks so bad, I cannot even recognize it. Are you doing the wrong dance?\""</h1>',
+                                    unsafe_allow_html=True)
+                    elif result["score"] <= 60:
+                        st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
                                     f'"{result["score"]}% | \"My grandmother dances better than that!! 💩\""</h1>',
                                     unsafe_allow_html=True)
-                    elif result["score"] <= 75:
+                    elif result["score"] <= 70:
                         st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">'
                                     f'"{result["score"]}% | \"Not bad! keep trying\""</h1>',
                                     unsafe_allow_html=True)

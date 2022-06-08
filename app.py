@@ -65,7 +65,7 @@ def main():
             if st.button("Rate Me!"):
                 params = {"filename": video_name}
                 with hc.HyLoader('Checking out your dance moves...', loader_name=hc.Loaders.pacman):
-                    response = requests.get('https://dancemachine-service-image-gmjmqkpfwq-ew.a.run.app/predict', params=params)
+                    response = requests.get('https://dancemachine-service-image-v2-gmjmqkpfwq-ew.a.run.app//predict', params=params)
                     status = response.status_code
                     result = response.json()
 

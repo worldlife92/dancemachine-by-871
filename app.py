@@ -22,8 +22,8 @@ def load_video(video_path):
 def main():
     st.title("Let’s Dance ヾ(⌐■_■)/♪♬")
     with st.sidebar:
-        choice = option_menu("Main Menu", ["The Challenge", 'Video Upload', 'Live Recording'],
-                             icons=['music-note-beamed', 'arrow-bar-up', 'record2'], menu_icon="three-dots-vertical", default_index=0)
+        choice = option_menu("Main Menu", ["The Challenge", 'Video Upload'],
+                             icons=['music-note-beamed', 'arrow-bar-up'], menu_icon="three-dots-vertical", default_index=0)
 
     # menu = ["Challenge", "Video upload", "Live record", "LR", "Video URL", "About"]
     # choice = st.sidebar.selectbox("Menu", menu)
@@ -52,10 +52,10 @@ def main():
             st.video(video_file)
 
             # Save video to temp file
-            # if not os.path.exists(temp_path):
-            #     os.makedirs(temp_path)
-            # with open(f"{temp_path}/{video_file.name}", "wb") as f:
-            #     f.write(video_file.getbuffer())
+            if not os.path.exists(temp_path):
+                os.makedirs(temp_path)
+            with open(f"{temp_path}/{video_file.name}", "wb") as f:
+                f.write(video_file.getbuffer())
             #     st.success("File Saved")
 
             # Upload video to gcp
@@ -67,7 +67,7 @@ def main():
             if st.button("Rate Me!"):
                 params = {"filename": video_name}
                 with hc.HyLoader('Checking out your dance moves...', loader_name=hc.Loaders.pacman):
-                    response = requests.get('http://127.0.0.1:8000/predict', params=params)
+                    response = requests.get('https://dancemachine-service-image-gmjmqkpfwq-ew.a.run.app/predict', params=params)
                     status = response.status_code
                     result = response.json()
 

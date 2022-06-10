@@ -59,7 +59,7 @@ def main():
             # Upload video to gcp
             if os.path.exists(f"{temp_path}/{video_file.name}"):
                 storage_upload(client, video_file.name, temp_path, True)
-                st.success(f" Successfully uploaded '{video_name}'!")
+                placeholder = st.success(f" Successfully uploaded '{video_name}'!")
 
 
             # Rate me button

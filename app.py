@@ -71,19 +71,28 @@ def main():
 
                 if status == 200:
                     if result["score"] <= 50:
-                        st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
-                                    f'"{result["score"]}% | \"It looks so bad, I cannot even recognize it. Are you doing the wrong dance?\""</h1>',
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"🥴 WTF is this? You sure didn\'t upload the wrong dance?\""</h1>',
+                                    unsafe_allow_html=True)
+                    elif result["score"] <= 55:
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"⭐️ My grandmother 👵🏼 dances better than that!! 💩\""</h1>',
                                     unsafe_allow_html=True)
                     elif result["score"] <= 60:
-                        st.markdown(f'<h1 style="color:#8b0000;font-size:24px;">'
-                                    f'"{result["score"]}% | \"My grandmother dances better than that!! 💩\""</h1>',
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"⭐️⭐️ Could be better 😒\""</h1>',
+                                    unsafe_allow_html=True)
+                    elif result["score"] <= 65:
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"⭐️⭐️⭐️ Not bad! keep trying 💃🕺\""</h1>',
                                     unsafe_allow_html=True)
                     elif result["score"] <= 70:
-                        st.markdown(f'<h1 style="color:#FFFF00;font-size:24px;">'
-                                    f'"{result["score"]}% | \"Not bad! keep trying\""</h1>',
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️ Almost there 🚀\""</h1>',
                                     unsafe_allow_html=True)
                     else:
-                        st.markdown(f'<h1 style="color:#00FF00;font-size:24px;">{"Perfect 🤩"}</h1>',
+                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
+                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️⭐️ Perfect, you\'re a star 🤩\""</h1>'
                                     unsafe_allow_html=True)
                 else:
                     st.error(f"Error {status} in request, couldn't rate '{video_name}'!")

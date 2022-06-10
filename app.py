@@ -92,7 +92,7 @@ def main():
                                     unsafe_allow_html=True)
                     else:
                         st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️⭐️ Perfect, you\'re a star 🤩\""</h1>'
+                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️⭐️ Perfect, you\'re a star 🤩\""</h1>',
                                     unsafe_allow_html=True)
                 else:
                     st.error(f"Error {status} in request, couldn't rate '{video_name}'!")

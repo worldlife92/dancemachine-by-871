@@ -61,41 +61,89 @@ def main():
                 storage_upload(client, video_file.name, temp_path, True)
                 st.success(f" Successfully uploaded '{video_name}'!")
 
+
             # Rate me button
             if st.button("Rate Me!"):
+                placeholder.empty()
                 params = {"filename": video_name}
                 with hc.HyLoader('Checking out your dance moves...', loader_name=hc.Loaders.pacman):
-                    response = requests.get('https://dancemachine-service-image-v2-gmjmqkpfwq-ew.a.run.app//predict', params=params)
+                    response = requests.get('https://dancemachine-service-image-v2-gmjmqkpfwq-ew.a.run.app//predict'
+                                            , params=params)
                     status = response.status_code
                     result = response.json()
 
                 if status == 200:
+                    col1, col2 = st.columns([5, 1])
                     if result["score"] <= 50:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"🥴 WTF is this? You sure didn\'t upload the wrong dance?\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:25px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'\"🥴 WTF is this? You sure didn\'t upload the wrong dance?\""</h1>',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#DB2D43;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                     elif result["score"] <= 55:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️ My grandmother 👵🏼 dances better than that!! 💩\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:35px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'\"⭐️ My grandmother 👵🏼 dances better than that!! 💩"</h1>',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#FFF600;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                     elif result["score"] <= 60:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️⭐️ Could be better 😒\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:35px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'\"⭐️⭐️ Could be better 😒"</h1>',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#FFF600;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                     elif result["score"] <= 65:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️⭐️⭐️ Not bad! keep trying 💃🕺\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:35px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'\"⭐️⭐️⭐️ Not bad! keep trying 💃🕺"</h1>',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#5DADEC;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                     elif result["score"] <= 70:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️ Almost there 🚀\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:35px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'\"⭐️⭐️⭐️⭐️ Almost there 🚀"</h1>',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#5DADEC;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                     else:
-                        st.markdown(f'<h1 style="color:#F4F6F7;font-size:36px;">'
-                                    f'"{result["score"]}% | \"⭐️⭐️⭐️⭐️⭐️ Perfect, you\'re a star 🤩\""</h1>',
-                                    unsafe_allow_html=True)
+                        with col1:
+                            st.markdown(f'<h1 style="color:#ffffff ;font-size:35px;>'
+                                        f'font-family: Comic Sans MS;">'
+                                        f'"⭐️⭐️⭐️⭐️⭐️ Perfect, you\'re a star 🤩"',
+                                        unsafe_allow_html=True)
+                        with col2:
+                            st.markdown(f'<h1 style="color:#66FF00;font-size:65px;font-weight: bold;'
+                                        f'font-family: arial, sans-serif;">'
+                                        f'{result["score"]}%'
+                                        f'</h1>', unsafe_allow_html=True)
                 else:
                     st.error(f"Error {status} in request, couldn't rate '{video_name}'!")
+                    st.success("Success")
+
 
 
     # elif choice == "Live Recording":

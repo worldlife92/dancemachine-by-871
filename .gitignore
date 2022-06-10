@@ -12,3 +12,6 @@ raw_data/
 *.mp4
 *.jpg
 .streamlit/secrets.toml
+Dockerfile
+api/
+docker_requirements.txt

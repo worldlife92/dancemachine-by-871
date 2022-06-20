@@ -9,13 +9,17 @@ def get_urls(input_name):
     # Instantiates a bucket
     bucket = client.bucket(BUCKET_NAME)
 
-    videos_fine = [filename.name for filename in list(bucket.list_blobs(prefix='cutted/fine/dance_')) if filename == input_name]
+    videos_fine = [
+        filename.name
+        for filename in list(bucket.list_blobs(prefix="cutted/fine/dance_"))
+        if filename == input_name
+    ]
 
     return videos_fine
 
 
 def storage_upload(client, name, temp_local_path, rm=False):
-    base_path = 'UPLOADED'
+    base_path = "UPLOADED"
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(f"{base_path}/{name}")
     blob.upload_from_filename(f"{temp_local_path}/{name}")
@@ -25,8 +29,8 @@ def storage_upload(client, name, temp_local_path, rm=False):
     if rm:  # Remove temp file after uploading
         os.remove(f"{temp_local_path}/{name}")
 
-    '''
+    """
     If we need to work with json file instead of secrets we could do the following:
     # add the service secret file locally then add the path to the following line
     # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/file.json"
-    '''
+    """

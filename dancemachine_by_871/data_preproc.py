@@ -47,7 +47,6 @@ MASKING[:] = -1
 
 
 class Preprocessor:
-
     def __init__(self, urls):
         self.urls = urls
 
@@ -60,17 +59,31 @@ class Preprocessor:
         if round(w / h, 2) < round(desired_width / desired_height, 2):
 
             new_width = int(desired_width / desired_height * h)
-            frame = cv2.copyMakeBorder(frame, 0, 0, 0, new_width - w, cv2.BORDER_CONSTANT)
+            frame = cv2.copyMakeBorder(
+                frame, 0, 0, 0, new_width - w, cv2.BORDER_CONSTANT
+            )
 
         elif round(w / h, 2) > round(desired_width / desired_height, 2):
 
             new_height = int(desired_height / desired_width * w)
-            frame = cv2.copyMakeBorder(frame, 0, new_height - h, 0, 0, cv2.BORDER_CONSTANT)
+            frame = cv2.copyMakeBorder(
+                frame, 0, new_height - h, 0, 0, cv2.BORDER_CONSTANT
+            )
 
-        return cv2.resize(frame, (desired_width, desired_height), interpolation=cv2.INTER_CUBIC)
+        return cv2.resize(
+            frame, (desired_width, desired_height), interpolation=cv2.INTER_CUBIC
+        )
 
-    def video_preprocess(self, videofile, frames=False, coords=False, showvideo=False, fps_desired=5, resize_width=288,
-                         resize_height=512):
+    def video_preprocess(
+        self,
+        videofile,
+        frames=False,
+        coords=False,
+        showvideo=False,
+        fps_desired=5,
+        resize_width=288,
+        resize_height=512,
+    ):
         """Extracts the frames and coordinates of points of interest/joints from the dance video and returns
         a list of frames of the video and an np.array of coordinates with the joints."""
 
@@ -87,7 +100,11 @@ class Preprocessor:
         vid_fps = cap.get(cv2.CAP_PROP_FPS)
 
         ## Setup mediapipe instance
-        with mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
+        with mp_pose.Pose(
+            static_image_mode=False,
+            min_detection_confidence=0.5,
+            min_tracking_confidence=0.5,
+        ) as pose:
             while cap.isOpened():
 
                 if showvideo:
@@ -101,7 +118,9 @@ class Preprocessor:
                     cv2.destroyAllWindows()
                     break
 
-                frames_lst.append(self.unify_imgsize(frame, resize_width, resize_height))
+                frames_lst.append(
+                    self.unify_imgsize(frame, resize_width, resize_height)
+                )
 
                 # Implement resizing of frame https://theailearner.com/2018/11/15/changing-video-resolution-using-opencv-python/
                 # Recolor image to RGB
@@ -127,13 +146,20 @@ class Preprocessor:
                     pass
 
                 # Render detections
-                mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                          mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                          mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2)
-                                          )
+                mp_drawing.draw_landmarks(
+                    image,
+                    results.pose_landmarks,
+                    mp_pose.POSE_CONNECTIONS,
+                    mp_drawing.DrawingSpec(
+                        color=(245, 117, 66), thickness=2, circle_radius=2
+                    ),
+                    mp_drawing.DrawingSpec(
+                        color=(245, 66, 230), thickness=2, circle_radius=2
+                    ),
+                )
 
                 if showvideo:
-                    cv2.imshow('Mediapipe Feed', image)
+                    cv2.imshow("Mediapipe Feed", image)
 
         new_fps = max(int(round(vid_fps / fps_desired)), 1)
 
@@ -153,18 +179,18 @@ class Preprocessor:
             return None
 
     def unit_vector(self, vector):
-        """ Returns the unit vector of the vector.  """
+        """Returns the unit vector of the vector."""
         return vector / np.linalg.norm(vector)
 
     def angle_between(self, a, b, c):
-        """ Returns the angle in radians between vectors 'v1' and 'v2'::
+        """Returns the angle in radians between vectors 'v1' and 'v2'::
 
-                >>> angle_between((1, 0, 0), (0, 1, 0))
-                1.5707963267948966
-                >>> angle_between((1, 0, 0), (1, 0, 0))
-                0.0
-                >>> angle_between((1, 0, 0), (-1, 0, 0))
-                3.141592653589793
+        >>> angle_between((1, 0, 0), (0, 1, 0))
+        1.5707963267948966
+        >>> angle_between((1, 0, 0), (1, 0, 0))
+        0.0
+        >>> angle_between((1, 0, 0), (-1, 0, 0))
+        3.141592653589793
         """
         a, b, c = np.array(a), np.array(b), np.array(c)
 
@@ -174,16 +200,38 @@ class Preprocessor:
 
     def angles(self, data):
         """Takes coordinates from video_preprocess function and outputs the data for the different angles"""
-        return np.array([self.angle_between(data[LEFT_WRIST], data[LEFT_ELBOW], data[LEFT_SHOULDER]), \
-                         self.angle_between(data[LEFT_HIP], data[LEFT_SHOULDER], data[LEFT_ELBOW]), \
-                         self.angle_between(data[LEFT_SHOULDER], data[LEFT_HIP], data[LEFT_KNEE]), \
-                         self.angle_between(data[LEFT_HIP], data[LEFT_KNEE], data[LEFT_ANKLE]), \
-                         self.angle_between(data[LEFT_KNEE], data[LEFT_ANKLE], data[LEFT_FOOT_INDEX]), \
-                         self.angle_between(data[RIGHT_WRIST], data[RIGHT_ELBOW], data[RIGHT_SHOULDER]), \
-                         self.angle_between(data[RIGHT_HIP], data[RIGHT_SHOULDER], data[RIGHT_ELBOW]), \
-                         self.angle_between(data[RIGHT_SHOULDER], data[RIGHT_HIP], data[RIGHT_KNEE]), \
-                         self.angle_between(data[RIGHT_HIP], data[RIGHT_KNEE], data[RIGHT_ANKLE]), \
-                         self.angle_between(data[RIGHT_KNEE], data[RIGHT_ANKLE], data[RIGHT_FOOT_INDEX])])
+        return np.array(
+            [
+                self.angle_between(
+                    data[LEFT_WRIST], data[LEFT_ELBOW], data[LEFT_SHOULDER]
+                ),
+                self.angle_between(
+                    data[LEFT_HIP], data[LEFT_SHOULDER], data[LEFT_ELBOW]
+                ),
+                self.angle_between(
+                    data[LEFT_SHOULDER], data[LEFT_HIP], data[LEFT_KNEE]
+                ),
+                self.angle_between(data[LEFT_HIP], data[LEFT_KNEE], data[LEFT_ANKLE]),
+                self.angle_between(
+                    data[LEFT_KNEE], data[LEFT_ANKLE], data[LEFT_FOOT_INDEX]
+                ),
+                self.angle_between(
+                    data[RIGHT_WRIST], data[RIGHT_ELBOW], data[RIGHT_SHOULDER]
+                ),
+                self.angle_between(
+                    data[RIGHT_HIP], data[RIGHT_SHOULDER], data[RIGHT_ELBOW]
+                ),
+                self.angle_between(
+                    data[RIGHT_SHOULDER], data[RIGHT_HIP], data[RIGHT_KNEE]
+                ),
+                self.angle_between(
+                    data[RIGHT_HIP], data[RIGHT_KNEE], data[RIGHT_ANKLE]
+                ),
+                self.angle_between(
+                    data[RIGHT_KNEE], data[RIGHT_ANKLE], data[RIGHT_FOOT_INDEX]
+                ),
+            ]
+        )
 
     def extract_X_y_angles(self, y_val=0):
         """Extracting X & ys for a list of paths to video files. Set y_val to the correct y_val for the video"""
@@ -201,15 +249,19 @@ class Preprocessor:
 
             X.append(np.array(jiggle_angles))
             y.append(y_val)
-            print(f'Finished processing {ind + 1} out of {len(self.urls)} in {round(time.time() - start, 2)} seconds.')
+            print(
+                f"Finished processing {ind + 1} out of {len(self.urls)} in {round(time.time() - start, 2)} seconds."
+            )
 
-        X = pad_sequences(X, padding='post', maxlen=MAX_LEN, dtype='float64', value=MASKING)
+        X = pad_sequences(
+            X, padding="post", maxlen=MAX_LEN, dtype="float64", value=MASKING
+        )
 
         X = X / np.pi
 
         return np.array(X), np.array(y)
 
 
-if __name__ == '__main__':
-    preproc = Preprocessor(['raw_data/jiggle.mp4'])
+if __name__ == "__main__":
+    preproc = Preprocessor(["raw_data/jiggle.mp4"])
     print(preproc.extract_X_y_angles(1))
